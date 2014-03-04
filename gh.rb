@@ -4,7 +4,11 @@ require 'json'
 require 'curb'
 require 'erubis'
 
-config = YAML::load(Erubis::Eruby.new(File.open('config.yml').read).result)
+begin
+    config = YAML::load(Erubis::Eruby.new(File.open('config.yml').read).result)
+rescue
+    config = YAML::load(Erubis::Eruby.new(File.open('config.yml.heroku_sample').read).result)
+end
 
 set :sessions, true
 set :logging, true
