@@ -90,7 +90,7 @@ post '/' do
     owner = push['repository']['owner']['name']
     push['commits'].each do |c|
         m = c['message']
-        issue = m.scan(/[^\#][0-9]+/)
+        issue = m.scan(/\#[0-9]+/)
         if issue.size == 1 #only check for other goodies if an issue is mentioned
             
             # user assignment
