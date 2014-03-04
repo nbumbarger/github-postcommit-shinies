@@ -29,6 +29,7 @@ def get_labels(user, repo, issue)
         c.http_auth_types = :basic
         c.username = options.gh_user
         c.password = options.gh_token
+        c.headers['User-Agent'] = 'Github-Issuehooks'
     end
     json = JSON.parse(curl.body_str)
     json['issue']['labels']
@@ -40,6 +41,7 @@ def add_labels(user, repo, issue, label)
         c.http_auth_types = :basic
         c.username = options.gh_user
         c.password = options.gh_token
+        c.headers['User-Agent'] = 'Github-Issuehooks'
     end
     p curl.body_str
 end
@@ -50,6 +52,7 @@ def remove_label(user, repo, issue, label)
         c.http_auth_types = :basic
         c.username = options.gh_user
         c.password = options.gh_token
+        c.headers['User-Agent'] = 'Github-Issuehooks'
     end
     p curl.body_str
 end
@@ -60,6 +63,7 @@ def update_labels(user, repo, issue, label)
         c.http_auth_types = :basic
         c.username = options.gh_user
         c.password = options.gh_token
+        c.headers['User-Agent'] = 'Github-Issuehooks'
     end
     p curl.body_str
 end
@@ -70,6 +74,7 @@ def assign_issue(user, repo, issue, assignee)
         c.http_auth_types = :basic
         c.username = options.gh_user
         c.password = options.gh_token
+        c.headers['User-Agent'] = 'Github-Issuehooks'
     end
     p curl.body_str
 end
@@ -80,6 +85,7 @@ def assign_milestone(user, repo, issue, milestone)
         c.http_auth_types = :basic
         c.username = options.gh_user
         c.password = options.gh_token
+        c.headers['User-Agent'] = 'Github-Issuehooks'
     end
     p curl.body_str
 end
@@ -89,7 +95,7 @@ get '/test' do
 end
 
 post '/' do
-    push = JSON.parse(params[:payload])
+    push = JSON.parse(request.body.read)
     repo = push['repository']['name']
     owner = push['repository']['owner']['name']
     push['commits'].each do |c|
