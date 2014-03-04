@@ -4,7 +4,11 @@ require 'json'
 require 'curb'
 require 'erubis'
 
-config = YAML::load(Erubis::Eruby.new(File.open('config.yml').read).result)
+begin
+    config = YAML::load(Erubis::Eruby.new(File.open('config.yml').read).result)
+rescue
+    config = YAML::load(Erubis::Eruby.new(File.open('config.yml.heroku_sample').read).result)
+end
 
 set :sessions, true
 set :logging, true
@@ -90,7 +94,7 @@ post '/' do
     owner = push['repository']['owner']['name']
     push['commits'].each do |c|
         m = c['message']
-        issue = m.scan(/[^\#][0-9]+/)
+        issue = m.scan(/\#[0-9]+/)
         if issue.size == 1 #only check for other goodies if an issue is mentioned
             
             # user assignment
