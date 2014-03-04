@@ -1,2 +1,3 @@
 user: <%= ENV['GITHUB_USERNAME'] %>
-token: <%= ENV['GITHUB_PASSWORD'] %>
+pass: <%= ENV['GITHUB_PASSWORD'] %>
+token: <%= ENV['GITHUB_TOKEN'] %>

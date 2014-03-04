@@ -16,6 +16,7 @@ set :sessions, true
 set :logging, true
 set :port, 3000
 set :gh_user, config['user']
+set :gh_pass, config['pass']
 set :gh_token, config['token']
 set :gh_api, "https://api.github.com/"
 set :gh_issue, "repos/:owner/:repo/issues/:number/labels" # get
@@ -27,10 +28,10 @@ set :gh_edit_issue, "repos/:owner/:repo/issues/:number" # patch
 
 def get_labels(user, repo, issue)
     endpoint = options.gh_issue.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue)
-    curl = Curl::Easy.http_get(options.gh_api + endpoint) do |c|
+    curl = Curl::Easy.http_get(options.gh_api + endpoint + '?access_token=' + options.gh_token) do |c|
         c.http_auth_types = :basic
         c.username = options.gh_user
-        c.password = options.gh_token
+        c.password = options.gh_pass
         c.headers['User-Agent'] = 'Github-Issuehooks'
     end
     json = JSON.parse(curl.body_str)
@@ -39,21 +40,25 @@ end
 
 def add_labels(user, repo, issue, label)
     endpoint = options.gh_add_label.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue)
-    Curl::Easy.http_post(options.gh_api + endpoint, label) do |c|
-        c.http_auth_types = :basic
-        c.username = options.gh_user
-        c.password = options.gh_token
-        c.headers['User-Agent'] = 'Github-Issuehooks'
+    begin
+        Curl::Easy.http_post(options.gh_api + endpoint + '?access_token=' + options.gh_token, label) do |c|
+            c.http_auth_types = :basic
+            c.username = options.gh_user
+            c.password = options.gh_pass
+            c.headers['User-Agent'] = 'Github-Issuehooks'
+        end
+        p 'added label(s)'
+    rescue e
+        p e.to_s
     end
-    p 'added label(s)'
 end
 
 def remove_label(user, repo, issue, label)
     endpoint = options.gh_remove_label.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue).gsub(':name', label)
-    Curl::Easy.http_delete(options.gh_api + endpoint) do |c|
+    Curl::Easy.http_delete(options.gh_api + endpoint + '?access_token=' + options.gh_token) do |c|
         c.http_auth_types = :basic
         c.username = options.gh_user
-        c.password = options.gh_token
+        c.password = options.gh_pass
         c.headers['User-Agent'] = 'Github-Issuehooks'
     end
     p 'removed label(s)'
@@ -61,10 +66,10 @@ end
 
 def update_labels(user, repo, issue, label)
     endpoint = options.gh_update_label.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue)
-    Curl::Easy.http_put(options.gh_api + endpoint, label) do |c|
+    Curl::Easy.http_put(options.gh_api + endpoint + '?access_token=' + options.gh_token, label) do |c|
         c.http_auth_types = :basic
         c.username = options.gh_user
-        c.password = options.gh_token
+        c.password = options.gh_pass
         c.headers['User-Agent'] = 'Github-Issuehooks'
     end
     p 'updated labels'
@@ -72,10 +77,10 @@ end
 
 def assign_issue(user, repo, issue, assignee)
     endpoint = options.gh_edit_issue.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue)
-    Curl.patch(options.gh_api + endpoint, {:assignee => assignee}.to_json) do |c|
+    Curl.patch(options.gh_api + endpoint + '?access_token=' + options.gh_token, {:assignee => assignee}.to_json) do |c|
         c.http_auth_types = :basic
         c.username = options.gh_user
-        c.password = options.gh_token
+        c.password = options.gh_pass
         c.headers['User-Agent'] = 'Github-Issuehooks'
     end
     p 'assigned issue to ' + assignee
@@ -83,10 +88,10 @@ end
 
 def assign_milestone(user, repo, issue, milestone)
     endpoint = options.gh_edit_issue.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue)
-    Curl.patch(options.gh_api + endpoint, {:milestone => milestone}.to_json) do |c|
+    Curl.patch(options.gh_api + endpoint + '?access_token=' + options.gh_token, {:milestone => milestone}.to_json) do |c|
         c.http_auth_types = :basic
         c.username = options.gh_user
-        c.password = options.gh_token
+        c.password = options.gh_pass
         c.headers['User-Agent'] = 'Github-Issuehooks'
     end
     p 'assigned new milestone'
