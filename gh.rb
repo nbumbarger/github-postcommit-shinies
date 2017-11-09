@@ -9,7 +9,7 @@ begin
     config = YAML::load(Erubis::Eruby.new(File.open('config.yml').read).result)
 rescue
     # heroku
-    config = YAML::load(Erubis::Eruby.new(File.open('config.yml.heroku_sample').read).result)
+    config = YAML::load(Erubis::Eruby.new(File.open('config.yml.heroku').read).result)
 end
 
 set :sessions, true
