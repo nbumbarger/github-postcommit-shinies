@@ -27,11 +27,11 @@ set :gh_edit_issue, "repos/:owner/:repo/issues/:number" # patch
 
 
 def get_labels(user, repo, issue)
-    endpoint = options.gh_issue.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue)
-    curl = Curl::Easy.http_get(options.gh_api + endpoint + '?access_token=' + options.gh_token) do |c|
+    endpoint = settings.gh_issue.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue)
+    curl = Curl::Easy.http_get(settings.gh_api + endpoint + '?access_token=' + settings.gh_token) do |c|
         c.http_auth_types = :basic
-        c.username = options.gh_user
-        c.password = options.gh_pass
+        c.username = settings.gh_user
+        c.password = settings.gh_pass
         c.headers['User-Agent'] = 'Github-Issuehooks'
     end
     json = JSON.parse(curl.body_str)
@@ -39,12 +39,12 @@ def get_labels(user, repo, issue)
 end
 
 def add_labels(user, repo, issue, label)
-    endpoint = options.gh_add_label.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue)
+    endpoint = settings.gh_add_label.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue)
     begin
-        Curl::Easy.http_post(options.gh_api + endpoint + '?access_token=' + options.gh_token, label) do |c|
+        Curl::Easy.http_post(settings.gh_api + endpoint + '?access_token=' + settings.gh_token, label) do |c|
             c.http_auth_types = :basic
-            c.username = options.gh_user
-            c.password = options.gh_pass
+            c.username = settings.gh_user
+            c.password = settings.gh_pass
             c.headers['User-Agent'] = 'Github-Issuehooks'
         end
         p 'added label(s)'
@@ -54,22 +54,22 @@ def add_labels(user, repo, issue, label)
 end
 
 def remove_label(user, repo, issue, label)
-    endpoint = options.gh_remove_label.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue).gsub(':name', label)
-    Curl::Easy.http_delete(options.gh_api + endpoint + '?access_token=' + options.gh_token) do |c|
+    endpoint = settings.gh_remove_label.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue).gsub(':name', label)
+    Curl::Easy.http_delete(settings.gh_api + endpoint + '?access_token=' + settings.gh_token) do |c|
         c.http_auth_types = :basic
-        c.username = options.gh_user
-        c.password = options.gh_pass
+        c.username = settings.gh_user
+        c.password = settings.gh_pass
         c.headers['User-Agent'] = 'Github-Issuehooks'
     end
     p 'removed label(s)'
 end
 
 def update_labels(user, repo, issue, label)
-    endpoint = options.gh_update_label.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue)
-    Curl::Easy.http_put(options.gh_api + endpoint + '?access_token=' + options.gh_token, label) do |c|
+    endpoint = settings.gh_update_label.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue)
+    Curl::Easy.http_put(settings.gh_api + endpoint + '?access_token=' + settings.gh_token, label) do |c|
         c.http_auth_types = :basic
-        c.username = options.gh_user
-        c.password = options.gh_pass
+        c.username = settings.gh_user
+        c.password = settings.gh_pass
         c.headers['User-Agent'] = 'Github-Issuehooks'
     end
     p 'updated labels'
@@ -77,32 +77,32 @@ end
 
 def assign_issue(user, repo, issue, assignee)
     p 'debug'
-    p options
+    p settings
     p 'others'
-    p options.gh_edit_issue
+    p settings.gh_edit_issue
     p user
     p repo
     p issue
-    p options.gh_api
+    p settings.gh_api
     p endpoint
-    p options.gh_token
+    p settings.gh_token
     p assignee
-    endpoint = options.gh_edit_issue.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue)
-    Curl.patch(options.gh_api + endpoint + '?access_token=' + options.gh_token, {:assignee => assignee}.to_json) do |c|
+    endpoint = settings.gh_edit_issue.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue)
+    Curl.patch(settings.gh_api + endpoint + '?access_token=' + settings.gh_token, {:assignee => assignee}.to_json) do |c|
         c.http_auth_types = :basic
-        c.username = options.gh_user
-        c.password = options.gh_pass
+        c.username = settings.gh_user
+        c.password = settings.gh_pass
         c.headers['User-Agent'] = 'Github-Issuehooks'
     end
     p 'assigned issue to ' + assignee
 end
 
 def assign_milestone(user, repo, issue, milestone)
-    endpoint = options.gh_edit_issue.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue)
-    Curl.patch(options.gh_api + endpoint + '?access_token=' + options.gh_token, {:milestone => milestone}.to_json) do |c|
+    endpoint = settings.gh_edit_issue.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue)
+    Curl.patch(settings.gh_api + endpoint + '?access_token=' + settings.gh_token, {:milestone => milestone}.to_json) do |c|
         c.http_auth_types = :basic
-        c.username = options.gh_user
-        c.password = options.gh_pass
+        c.username = settings.gh_user
+        c.password = settings.gh_pass
         c.headers['User-Agent'] = 'Github-Issuehooks'
     end
     p 'assigned new milestone'
