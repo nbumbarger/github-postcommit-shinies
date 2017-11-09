@@ -77,6 +77,10 @@ end
 
 def assign_issue(user, repo, issue, assignee)
     p 'debug'
+    p options.gh_edit_issue
+    p user
+    p repo
+    p.issue
     p options.gh_api
     p endpoint
     p options.gh_token
