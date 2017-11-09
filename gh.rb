@@ -77,16 +77,17 @@ end
 
 def assign_issue(user, repo, issue, assignee)
     p 'debug'
-    p settings
+    p 'l-80: ' + settings
     p 'others'
-    p settings.gh_edit_issue
-    p user
-    p repo
-    p issue
-    p settings.gh_api
-    p endpoint
-    p settings.gh_token
-    p assignee
+    p 'l-82: ' + settings.gh_edit_issue
+    p 'l-83: ' + user
+    p 'l-84: ' + repo
+    p 'l-85: ' + issue
+    p 'l-86: ' + settings.gh_api
+    p 'l-87: ' + endpoint
+    p 'l-88: ' + settings.gh_token
+    p 'l-89: ' + assignee
+    p 'l-90: ' + o
     endpoint = settings.gh_edit_issue.gsub(':owner', user).gsub(':repo', repo).gsub(':number', issue)
     Curl.patch(settings.gh_api + endpoint + '?access_token=' + settings.gh_token, {:assignee => assignee}.to_json) do |c|
         c.http_auth_types = :basic
